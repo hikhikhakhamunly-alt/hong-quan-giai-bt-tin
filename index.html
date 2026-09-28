@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hồng Quân Giải BT Tin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div class="tag">HỖ TRỢ HỌC TẬP</div>
+      <h1>Hồng Quân <span>Giải BT Tin</span></h1>
+      <p>Điền thông tin yêu cầu để gửi đơn hỗ trợ.</p>
+    </header>
+
+    <section class="panel">
+      <h2>📝 Tạo yêu cầu</h2>
+      <form id="orderForm">
+        <label for="username">Tên tài khoản</label>
+        <input id="username" name="username" type="text" placeholder="Nhập tên tài khoản" required maxlength="60">
+
+        <label for="verify">MK ✅ (mã xác nhận, không phải mật khẩu đăng nhập)</label>
+        <input id="verify" name="verify" type="text" placeholder="Nhập mã xác nhận nếu có" maxlength="60">
+
+        <label for="lesson">Chọn bài cần hỗ trợ</label>
+        <select id="lesson" name="lesson" required>
+          <option value="">-- Chọn bài 1–50 --</option>
+        </select>
+
+        <label for="payment">Hình thức thanh toán</label>
+        <select id="payment" name="payment" required>
+          <option value="">-- Chọn hình thức --</option>
+          <option>Garena</option>
+          <option>Zing</option>
+          <option>Viettel</option>
+          <option>Mobifone</option>
+          <option>Thanh toán trực tiếp</option>
+        </select>
+        <p class="hint">Chỉ chọn hình thức thanh toán. Không nhập mật khẩu, mã PIN, số seri hay mã bí mật của thẻ.</p>
+
+        <label for="note">Ghi chú</label>
+        <textarea id="note" name="note" rows="4" placeholder="Ghi chú thêm (không bắt buộc)" maxlength="500"></textarea>
+
+        <button type="submit">Gửi yêu cầu</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+    <footer>Hãy chỉ cung cấp thông tin cần thiết cho yêu cầu học tập.</footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
