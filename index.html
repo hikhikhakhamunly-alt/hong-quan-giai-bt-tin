@@ -8,82 +8,155 @@
 <style>
 *{box-sizing:border-box}
 body{
-  margin:0;min-height:100vh;display:flex;align-items:center;
-  justify-content:center;padding:20px;
-  font-family:Arial,sans-serif;color:white;
-  background:radial-gradient(circle at top,#123d70,#050914 65%);
+  margin:0;min-height:100vh;padding:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Arial,sans-serif;color:#fff;
+  background:radial-gradient(circle at top,#164c80,#050914 70%);
 }
 .container{
-  width:100%;max-width:430px;padding:28px;
+  width:100%;max-width:440px;padding:28px;
   border:1px solid #18cfff;border-radius:20px;
-  background:#081426ef;box-shadow:0 0 28px #00bfff55;
+  background:#081426;
+  box-shadow:0 0 30px #00bfff55;
   text-align:center;
 }
 h1{color:#43d9ff;text-shadow:0 0 12px #00bfff}
-p{color:#c5d9ec}
-.choices{display:grid;gap:14px;margin-top:24px}
+h2{color:#43d9ff}
+p{color:#c5d9ec;line-height:1.5}
 button{
-  width:100%;padding:15px;border:1px solid #20cfff;
-  border-radius:12px;background:#0c2944;color:white;
-  font-size:17px;font-weight:bold;cursor:pointer;
+  width:100%;padding:14px;margin-top:12px;
+  border:1px solid #20cfff;border-radius:12px;
+  background:#0c2944;color:white;
+  font-size:16px;font-weight:bold;cursor:pointer;
 }
 button:hover{background:#07517b;box-shadow:0 0 15px #00cfff}
 input{
-  width:100%;padding:13px;margin:8px 0;
+  width:100%;padding:13px;margin-top:12px;
   border:1px solid #20cfff;border-radius:9px;
   background:#06101f;color:white;font-size:16px;
 }
+input::placeholder{color:#a8bed4}
 .panel{display:none;margin-top:20px}
 .small{font-size:13px;color:#a8bed4}
+#status{min-height:24px;margin-top:14px;font-weight:bold}
+.back{background:#26384b;border-color:#60758c}
 </style>
 </head>
 <body>
 <div class="container">
   <h1>HỒNG QUÂN</h1>
-  <p>Chào mừng bạn đến với hệ thống</p>
+  <p>Chào mừng bạn đến với hệ thống giải bài tập</p>
 
-  <div id="choose" class="choices">
+  <div id="choose">
     <button onclick="showUser()">👤 Người dùng</button>
     <button onclick="showAdmin()">🔐 Tài khoản Admin</button>
   </div>
 
   <div id="user" class="panel">
     <h2>Người dùng</h2>
-    <p>Tiếp tục đến trang gửi bài tập.</p>
+    <p>Nhấn nút bên dưới để vào trang gửi bài tập.</p>
     <button onclick="location.href='form.html'">
       Vào trang gửi bài
     </button>
-    <button onclick="back()">Quay lại</button>
+    <button class="back" onclick="back()">Quay lại</button>
   </div>
 
   <div id="admin" class="panel">
     <h2>Đăng nhập Admin</h2>
-    <input id="adminName" placeholder="Tên tài khoản Admin">
-    <input id="adminPass" type="password" placeholder="Mật khẩu">
-    <p class="small">
-      Cần kết nối xác thực Admin bằng Apps Script
-      trước khi sử dụng tài khoản thật.
-    </p>
-    <button onclick="alert('Chưa kết nối xác thực Admin. Hãy thiết lập Apps Script trước.')">
+    <input id="adminName" type="text"
+           placeholder="Tên tài khoản Admin"
+           autocomplete="username">
+    <input id="adminPass" type="password"
+           placeholder="Mật khẩu"
+           autocomplete="current-password">
+    <button id="loginButton" onclick="loginAdmin()">
       Đăng nhập
     </button>
-    <button onclick="back()">Quay lại</button>
+    <div id="status" aria-live="polite"></div>
+    <p class="small">
+      Chỉ sử dụng tài khoản thử nghiệm cho đến khi xác thực
+      và bảo vệ khu vực Admin được thiết lập đầy đủ.
+    </p>
+    <button class="back" onclick="back()">Quay lại</button>
   </div>
 </div>
 
 <script>
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbyo2SpfFhAUXmB-H5cFBXem6DL4un1WhRXn8zo2QmAmrjynl4rPzQmoqPMccoXvvYYUJQ/exec";
+
 function showUser(){
-  document.getElementById('choose').style.display='none';
-  document.getElementById('user').style.display='block';
+  document.getElementById("choose").style.display = "none";
+  document.getElementById("admin").style.display = "none";
+  document.getElementById("user").style.display = "block";
 }
+
 function showAdmin(){
-  document.getElementById('choose').style.display='none';
-  document.getElementById('admin').style.display='block';
+  document.getElementById("choose").style.display = "none";
+  document.getElementById("user").style.display = "none";
+  document.getElementById("admin").style.display = "block";
+  document.getElementById("status").textContent = "";
 }
+
 function back(){
-  document.getElementById('user').style.display='none';
-  document.getElementById('admin').style.display='none';
-  document.getElementById('choose').style.display='grid';
+  document.getElementById("user").style.display = "none";
+  document.getElementById("admin").style.display = "none";
+  document.getElementById("choose").style.display = "block";
+}
+
+async function loginAdmin(){
+  const username =
+    document.getElementById("adminName").value.trim();
+  const password =
+    document.getElementById("adminPass").value;
+  const status = document.getElementById("status");
+  const button = document.getElementById("loginButton");
+
+  if(!username || !password){
+    status.textContent = "Vui lòng nhập đủ tài khoản và mật khẩu.";
+    status.style.color = "#ffcf55";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Đang kiểm tra...";
+  status.textContent = "";
+
+  try{
+    const response = await fetch(SCRIPT_URL,{
+      method:"POST",
+      headers:{
+        "Content-Type":"text/plain;charset=utf-8"
+      },
+      body:JSON.stringify({
+        action:"login",
+        username:username,
+        password:password
+      })
+    });
+
+    if(!response.ok){
+      throw new Error("Máy chủ phản hồi lỗi.");
+    }
+
+    const result = await response.json();
+
+    if(result.success === true){
+      status.textContent =
+        "Đăng nhập thành công. Trang quản trị chưa được tạo.";
+      status.style.color = "#55ef9b";
+    }else{
+      status.textContent = "Sai tài khoản hoặc mật khẩu.";
+      status.style.color = "#ff7777";
+    }
+  }catch(error){
+    status.textContent =
+      "Không đọc được phản hồi máy chủ. Cần kiểm tra kết nối Apps Script.";
+    status.style.color = "#ffcf55";
+  }finally{
+    button.disabled = false;
+    button.textContent = "Đăng nhập";
+  }
 }
 </script>
 </body>
