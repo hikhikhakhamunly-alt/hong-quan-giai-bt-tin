@@ -40,6 +40,16 @@ input::placeholder{color:#a8bed4}
 .small{font-size:13px;color:#a8bed4}
 #status{min-height:24px;margin-top:14px;font-weight:bold}
 .back{background:#26384b;border-color:#60758c}
+
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+.plan{display:flex;align-items:center;gap:10px;margin:0;padding:12px;border:1px solid #245a7c;border-radius:12px;background:#06101f;text-align:left;cursor:pointer}
+.plan input{width:auto;margin:0;accent-color:#43d9ff}
+.plan span{display:flex;flex-direction:column;gap:5px}
+.plan b{color:#dff7ff}.plan strong{color:#43d9ff;font-size:17px}
+#shop label:not(.plan){display:block;text-align:left;margin:14px 0 6px;color:#bfeaff;font-size:14px;font-weight:bold}
+#shop input[type=text],#shop select,#shop textarea{width:100%;padding:12px;border:1px solid #245a7c;border-radius:9px;background:#06101f;color:#fff;font:inherit}
+.shop-status{min-height:24px;margin-top:14px;line-height:1.5;font-weight:bold}
+@media(max-width:420px){.plans{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -49,6 +59,7 @@ input::placeholder{color:#a8bed4}
 
   <div id="choose">
     <button onclick="showUser()">👤 Người dùng</button>
+    <button onclick="showShop()">🛒 Mua KEY VIP</button>
     <button onclick="showAdmin()">🔐 Tài khoản Admin</button>
   </div>
 
@@ -58,6 +69,34 @@ input::placeholder{color:#a8bed4}
     <button onclick="location.href='form.html'">
       Vào trang gửi bài
     </button>
+    <button class="back" onclick="back()">Quay lại</button>
+  </div>
+
+  <div id="shop" class="panel">
+    <h2>🛒 Mua KEY thành viên VIP</h2>
+    <p>Chọn gói thành viên phù hợp với bạn.</p>
+    <div class="plans">
+      <label class="plan"><input type="radio" name="keyPlan" value="1 tháng - 50.000đ" checked><span><b>1 tháng</b><strong>50.000đ</strong></span></label>
+      <label class="plan"><input type="radio" name="keyPlan" value="2 tháng - 100.000đ"><span><b>2 tháng</b><strong>100.000đ</strong></span></label>
+      <label class="plan"><input type="radio" name="keyPlan" value="3 tháng - 120.000đ"><span><b>3 tháng</b><strong>120.000đ</strong></span></label>
+      <label class="plan"><input type="radio" name="keyPlan" value="Vĩnh viễn - 150.000đ"><span><b>Vĩnh viễn</b><strong>150.000đ</strong></span></label>
+    </div>
+    <label for="buyerName">Tên tài khoản trên web</label>
+    <input id="buyerName" type="text" placeholder="Nhập tên tài khoản" autocomplete="username">
+    <label for="payMethod">Phương thức thanh toán</label>
+    <select id="payMethod">
+      <option value="">-- Chọn phương thức --</option>
+      <option>Thẻ cào Viettel</option>
+      <option>Thẻ cào Mobifone</option>
+      <option>Thẻ game Garena</option>
+      <option>Thẻ game Zing</option>
+      <option>Trao đổi trực tiếp</option>
+    </select>
+    <label for="buyerNote">Ghi chú (không bắt buộc)</label>
+    <textarea id="buyerNote" rows="3" placeholder="Ví dụ: thời gian thuận tiện để trao đổi"></textarea>
+    <button type="button" onclick="createKeyOrder()">Tạo đơn mua KEY</button>
+    <div id="shopStatus" class="shop-status" aria-live="polite"></div>
+    <p class="small">Đơn hàng sẽ ở trạng thái chờ xác nhận. Không nhập mã thẻ hoặc thông tin bí mật vào ghi chú. KEY chỉ được cấp sau khi quản lý xác minh thanh toán.</p>
     <button class="back" onclick="back()">Quay lại</button>
   </div>
 
@@ -84,23 +123,60 @@ input::placeholder{color:#a8bed4}
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyo2SpfFhAUXmB-H5cFBXem6DL4un1WhRXn8zo2QmAmrjynl4rPzQmoqPMccoXvvYYUJQ/exec";
 
-function showUser(){
+function hidePanels(){
+  ["user","admin","shop"].forEach(id => {
+    document.getElementById(id).style.display = "none";
+  });
   document.getElementById("choose").style.display = "none";
-  document.getElementById("admin").style.display = "none";
+}
+function showUser(){
+  hidePanels();
   document.getElementById("user").style.display = "block";
+}
+function showShop(){
+  hidePanels();
+  document.getElementById("shop").style.display = "block";
+  document.getElementById("shopStatus").textContent = "";
 }
 
 function showAdmin(){
-  document.getElementById("choose").style.display = "none";
-  document.getElementById("user").style.display = "none";
+  hidePanels();
   document.getElementById("admin").style.display = "block";
   document.getElementById("status").textContent = "";
 }
 
 function back(){
-  document.getElementById("user").style.display = "none";
-  document.getElementById("admin").style.display = "none";
+  ["user","admin","shop"].forEach(id => {
+    document.getElementById(id).style.display = "none";
+  });
   document.getElementById("choose").style.display = "block";
+}
+function createKeyOrder(){
+  const name = document.getElementById("buyerName").value.trim();
+  const method = document.getElementById("payMethod").value;
+  const plan = document.querySelector('input[name="keyPlan"]:checked');
+  const note = document.getElementById("buyerNote").value.trim();
+  const status = document.getElementById("shopStatus");
+  if(!name || !method || !plan){
+    status.textContent = "Vui lòng nhập tên tài khoản, chọn gói KEY và phương thức thanh toán.";
+    status.style.color = "#ffcf55";
+    return;
+  }
+  const order = {
+    loai: "Mua KEY VIP",
+    taiKhoan: name,
+    goiKey: plan.value,
+    phuongThuc: method,
+    ghiChu: note,
+    trangThai: "Chờ xác nhận",
+    thoiGian: new Date().toISOString()
+  };
+  // Bản giao diện tạo đơn tại trình duyệt; chưa gửi tới máy chủ hay tự xác minh thanh toán.
+  const orders = JSON.parse(sessionStorage.getItem("keyOrders") || "[]");
+  orders.push(order);
+  sessionStorage.setItem("keyOrders", JSON.stringify(orders));
+  status.style.color = "#55ef9b";
+  status.textContent = "Đã tạo đơn chờ xác nhận trên trình duyệt này. Hãy liên hệ quản lý để xác minh thanh toán và nhận KEY.";
 }
 
 async function loginAdmin(){
