@@ -1,53 +1,149 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hồng Quân Giải BT Tin</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hồng Quân Giải BT Tin</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;
+  font-family:Arial,sans-serif;
+  color:#fff;
+  background:linear-gradient(135deg,#071b42,#073b72,#087fba);
+  display:flex;justify-content:center;align-items:center;
+  padding:20px
+}
+.card{
+  width:100%;max-width:480px;
+  background:#07152bea;
+  border:1px solid #31c5ff;
+  border-radius:20px;padding:25px;
+  box-shadow:0 0 25px #00baff66
+}
+h1{text-align:center;color:#55d5ff;margin-top:0}
+p{text-align:center;color:#c5eaff}
+label{display:block;margin:15px 0 7px;font-weight:bold}
+input,select,textarea{
+  width:100%;padding:13px;border-radius:10px;
+  border:1px solid #39bfff;background:#10294b;
+  color:white;font-size:16px
+}
+button{
+  width:100%;margin-top:20px;padding:14px;
+  border:0;border-radius:12px;
+  background:linear-gradient(90deg,#00aaff,#16e0c2);
+  color:#00152a;font-size:17px;font-weight:bold;
+  cursor:pointer
+}
+button:disabled{opacity:.5}
+.links{display:flex;gap:10px;margin-top:15px}
+.links a{
+  flex:1;text-align:center;padding:11px 5px;
+  border-radius:9px;background:#123c60;
+  color:#75dcff;text-decoration:none;font-size:14px
+}
+#status{text-align:center;margin-top:15px;min-height:22px}
+.small{font-size:12px;color:#a9cbe0;text-align:center}
+</style>
 </head>
 <body>
-  <main class="wrap">
-    <header class="hero">
-      <div class="tag">HỖ TRỢ HỌC TẬP</div>
-      <h1>Hồng Quân <span>Giải BT Tin</span></h1>
-      <p>Điền thông tin yêu cầu để gửi đơn hỗ trợ.</p>
-    </header>
+<main class="card">
+  <h1>📘 Hồng Quân Giải BT Tin</h1>
+  <p>Điền thông tin để gửi yêu cầu</p>
 
-    <section class="panel">
-      <h2>📝 Tạo yêu cầu</h2>
-      <form id="orderForm">
-        <label for="username">Tên tài khoản</label>
-        <input id="username" name="username" type="text" placeholder="Nhập tên tài khoản" required maxlength="60">
+  <form id="form">
+    <label for="ten">Tên tài khoản</label>
+    <input id="ten" name="tenTaiKhoan" required
+           placeholder="Nhập tên tài khoản">
 
-        <label for="verify">MK ✅ (mã xác nhận, không phải mật khẩu đăng nhập)</label>
-        <input id="verify" name="verify" type="text" placeholder="Nhập mã xác nhận nếu có" maxlength="60">
+    <label for="ma">Mã xác nhận</label>
+    <input id="ma" name="maXacNhan" required
+           placeholder="Nhập mã xác nhận"
+           autocomplete="off">
 
-        <label for="lesson">Chọn bài cần hỗ trợ</label>
-        <select id="lesson" name="lesson" required>
-          <option value="">-- Chọn bài 1–50 --</option>
-        </select>
+    <label for="bai">Nội dung cần giải</label>
+    <textarea id="bai" name="bai" rows="4" required
+              placeholder="Nhập bài tập hoặc yêu cầu"></textarea>
 
-        <label for="payment">Hình thức thanh toán</label>
-        <select id="payment" name="payment" required>
-          <option value="">-- Chọn hình thức --</option>
-          <option>Garena</option>
-          <option>Zing</option>
-          <option>Viettel</option>
-          <option>Mobifone</option>
-          <option>Thanh toán trực tiếp</option>
-        </select>
-        <p class="hint">Chỉ chọn hình thức thanh toán. Không nhập mật khẩu, mã PIN, số seri hay mã bí mật của thẻ.</p>
+    <label for="thanhtoan">Hình thức thanh toán</label>
+    <select id="thanhtoan" name="thanhToan" required>
+      <option value="">-- Chọn hình thức --</option>
+      <option value="Miễn phí">Miễn phí</option>
+      <option value="Trao đổi trực tiếp">Trao đổi trực tiếp</option>
+    </select>
 
-        <label for="note">Ghi chú</label>
-        <textarea id="note" name="note" rows="4" placeholder="Ghi chú thêm (không bắt buộc)" maxlength="500"></textarea>
+    <label for="ghichu">Ghi chú (không bắt buộc)</label>
+    <textarea id="ghichu" name="ghiChu" rows="2"
+              placeholder="Ghi chú thêm"></textarea>
 
-        <button type="submit">Gửi yêu cầu</button>
-        <p id="status" class="status" role="status" aria-live="polite"></p>
-      </form>
-    </section>
-    <footer>Hãy chỉ cung cấp thông tin cần thiết cho yêu cầu học tập.</footer>
-  </main>
-  <script src="script.js"></script>
+    <button id="submit" type="submit">📨 Gửi yêu cầu</button>
+  </form>
+
+  <div id="status" role="status"></div>
+
+  <div class="links">
+    <a href="https://docs.google.com/spreadsheets/d/1-FpNmH8e8U5uaRZF1RvBOMQ1GH7Bg7K2RKsyMO3Nt5A/edit?usp=drivesdk"
+       target="_blank" rel="noopener">📊 Google Sheets</a>
+    <a href="https://script.google.com/macros/s/AKfycbyH3b5bnohW0v0qafJ-4VhFTmm3DXFqDycPkGruOz9nPy1Po0xhpR9hp935q_HUooZ9/exec"
+       target="_blank" rel="noopener">🔗 Apps Script</a>
+  </div>
+
+  <p class="small">
+    Không nhập mật khẩu đăng nhập, mã OTP, mã thẻ hoặc thông tin bí mật.
+  </p>
+</main>
+
+<script>
+const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbyH3b5bnohW0v0qafJ-4VhFTmm3DXFqDycPkGruOz9nPy1Po0xhpR9hp935q_HUooZ9/exec";
+
+const form = document.getElementById("form");
+const statusBox = document.getElementById("status");
+const submitBtn = document.getElementById("submit");
+
+form.addEventListener("submit", async function(event){
+  event.preventDefault();
+
+  const data = {
+    tenTaiKhoan: form.tenTaiKhoan.value.trim(),
+    maXacNhan: form.maXacNhan.value.trim(),
+    bai: form.bai.value.trim(),
+    thanhToan: form.thanhToan.value,
+    ghiChu: form.ghiChu.value.trim(),
+    thoiGian: new Date().toLocaleString("vi-VN")
+  };
+
+  if(!data.tenTaiKhoan || !data.maXacNhan ||
+     !data.bai || !data.thanhToan){
+    statusBox.textContent = "Vui lòng điền đủ thông tin.";
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Đang gửi...";
+  statusBox.textContent = "";
+
+  try{
+    await fetch(SCRIPT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(data)
+    });
+
+    statusBox.textContent =
+      "Đã gửi yêu cầu. Hãy kiểm tra Google Sheets để xác nhận.";
+    form.reset();
+  }catch(error){
+    statusBox.textContent =
+      "Không gửi được. Vui lòng kiểm tra kết nối và cấu hình Apps Script.";
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = "📨 Gửi yêu cầu";
+  }
+});
+</script>
 </body>
 </html>
