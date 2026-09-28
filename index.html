@@ -8,24 +8,20 @@
 <style>
 *{box-sizing:border-box}
 body{
-  margin:0;min-height:100vh;
-  font-family:Arial,sans-serif;
-  color:#fff;
-  background:linear-gradient(135deg,#071b42,#073b72,#087fba);
-  display:flex;justify-content:center;align-items:center;
-  padding:20px
+  margin:0;min-height:100vh;padding:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Arial,sans-serif;color:white;
+  background:linear-gradient(135deg,#071b42,#073b72,#087fba)
 }
 .card{
-  width:100%;max-width:480px;
-  background:#07152bea;
-  border:1px solid #31c5ff;
-  border-radius:20px;padding:25px;
-  box-shadow:0 0 25px #00baff66
+  width:100%;max-width:480px;padding:25px;
+  background:#07152bea;border:1px solid #31c5ff;
+  border-radius:20px;box-shadow:0 0 25px #00baff66
 }
 h1{text-align:center;color:#55d5ff;margin-top:0}
 p{text-align:center;color:#c5eaff}
 label{display:block;margin:15px 0 7px;font-weight:bold}
-input,select,textarea{
+input,textarea{
   width:100%;padding:13px;border-radius:10px;
   border:1px solid #39bfff;background:#10294b;
   color:white;font-size:16px
@@ -38,13 +34,13 @@ button{
   cursor:pointer
 }
 button:disabled{opacity:.5}
+#status{text-align:center;margin-top:15px;min-height:22px}
 .links{display:flex;gap:10px;margin-top:15px}
 .links a{
   flex:1;text-align:center;padding:11px 5px;
   border-radius:9px;background:#123c60;
   color:#75dcff;text-decoration:none;font-size:14px
 }
-#status{text-align:center;margin-top:15px;min-height:22px}
 .small{font-size:12px;color:#a9cbe0;text-align:center}
 </style>
 </head>
@@ -56,27 +52,19 @@ button:disabled{opacity:.5}
   <form id="form">
     <label for="ten">Tên tài khoản</label>
     <input id="ten" name="tenTaiKhoan" required
-           placeholder="Nhập tên tài khoản">
+      placeholder="Nhập tên tài khoản">
 
-    <label for="ma">matkhau</label>
-    <input id="ma" name="maXacNhan" required
-           placeholder="Nhập mã xác nhận"
-           autocomplete="off">
+    <label for="key">KEY AD</label>
+    <input id="key" name="thanhToan" required
+      placeholder="Nhập KEY AD" autocomplete="off">
 
     <label for="bai">Nội dung cần giải</label>
     <textarea id="bai" name="bai" rows="4" required
-              placeholder="Nhập bài tập hoặc yêu cầu"></textarea>
-
-    <label for="thanhtoan">Hình thức thanh toán</label>
-    <select id="thanhtoan" name="thanhToan" required>
-      <option value="">-- Chọn hình thức --</option>
-      <option value="Miễn phí">Miễn phí</option>
-      <option value="Trao đổi trực tiếp">Trao đổi trực tiếp</option>
-    </select>
+      placeholder="Nhập bài tập hoặc yêu cầu"></textarea>
 
     <label for="ghichu">Ghi chú (không bắt buộc)</label>
     <textarea id="ghichu" name="ghiChu" rows="2"
-              placeholder="Ghi chú thêm"></textarea>
+      placeholder="Ghi chú thêm"></textarea>
 
     <button id="submit" type="submit">📨 Gửi yêu cầu</button>
   </form>
@@ -91,7 +79,7 @@ button:disabled{opacity:.5}
   </div>
 
   <p class="small">
-    Không nhập mật khẩu đăng nhập, mã OTP, mã thẻ hoặc thông tin bí mật.
+    Không nhập mật khẩu, mã OTP hoặc thông tin bí mật cá nhân.
   </p>
 </main>
 
@@ -108,24 +96,27 @@ form.addEventListener("submit", async function(event){
 
   const data = {
     tenTaiKhoan: form.tenTaiKhoan.value.trim(),
-    maXacNhan: form.maXacNhan.value.trim(),
+    thanhToan: form.thanhToan.value.trim(),
     bai: form.bai.value.trim(),
-    thanhToan: form.thanhToan.value,
-    ghiChu: form.ghiChu.value.trim(),
-    thoiGian: new Date().toLocaleString("vi-VN")
+    ghiChu: form.ghiChu.value.trim()
   };
 
-  if(!data.tenTaiKhoan || !data.maXacNhan ||
-     !data.bai || !data.thanhToan){
+  if(!data.tenTaiKhoan || !data.thanhToan || !data.bai){
     statusBox.textContent = "Vui lòng điền đủ thông tin.";
+    statusBox.style.color = "#ffca66";
     return;
   }
 
   submitBtn.disabled = true;
   submitBtn.textContent = "Đang gửi...";
-  statusBox.textContent = "";
+  statusBox.textContent =
+    "Đang kiểm tra KEY và gửi yêu cầu...";
+  statusBox.style.color = "#c5eaff";
 
   try{
+    // Gửi đến máy chủ. no-cors không cho trình duyệt
+    // đọc nội dung phản hồi, nên không thể xác nhận
+    // KEY hợp lệ chỉ từ phản hồi này.
     await fetch(SCRIPT_URL,{
       method:"POST",
       mode:"no-cors",
@@ -135,10 +126,12 @@ form.addEventListener("submit", async function(event){
 
     statusBox.textContent =
       "Đã gửi yêu cầu. Hãy kiểm tra Google Sheets để xác nhận.";
+    statusBox.style.color = "#6dffb0";
     form.reset();
   }catch(error){
     statusBox.textContent =
-      "Không gửi được. Vui lòng kiểm tra kết nối và cấu hình Apps Script.";
+      "Không gửi được. Kiểm tra kết nối hoặc cấu hình Apps Script.";
+    statusBox.style.color = "#ff7777";
   }finally{
     submitBtn.disabled = false;
     submitBtn.textContent = "📨 Gửi yêu cầu";
