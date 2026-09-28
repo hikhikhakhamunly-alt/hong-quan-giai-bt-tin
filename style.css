@@ -1,0 +1,25 @@
+* { box-sizing: border-box; }
+:root { color-scheme: dark; }
+body {
+  margin: 0; min-height: 100vh; color: #eaf6ff;
+  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(ellipse at top, #123b67 0%, #071629 48%, #030811 100%);
+}
+.wrap { width: min(720px, 92%); margin: 0 auto; padding: 42px 0 24px; }
+.hero { text-align: center; padding: 18px 12px 28px; }
+.tag { display: inline-block; padding: 7px 13px; border: 1px solid #36c5ff; border-radius: 99px; color: #7de0ff; letter-spacing: 2px; font-size: 11px; }
+h1 { margin: 16px 0 8px; font-size: clamp(30px, 7vw, 48px); text-shadow: 0 0 18px #00aaff70; }
+h1 span { display: block; color: #42d6ff; }
+.hero p { color: #a9c7df; margin: 0; }
+.panel { padding: 26px; border: 1px solid #1c78a8; border-radius: 20px; background: #071b2be8; box-shadow: 0 0 35px #009dff20, inset 0 0 24px #0b6c9b18; }
+h2 { margin: 0 0 22px; font-size: 22px; }
+label { display: block; margin: 17px 0 8px; color: #bfeaff; font-weight: 700; font-size: 14px; }
+input, select, textarea { width: 100%; border: 1px solid #285a78; border-radius: 10px; padding: 13px 14px; background: #04111e; color: #f2fbff; font: inherit; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: #42d6ff; box-shadow: 0 0 0 3px #42d6ff20; }
+textarea { resize: vertical; }
+.hint { margin: 8px 0 0; color: #9cb7ca; font-size: 12px; line-height: 1.5; }
+button { width: 100%; margin-top: 22px; padding: 14px; border: 0; border-radius: 11px; color: #03111b; background: linear-gradient(90deg, #35d6ff, #60ffda); font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 7px 24px #00caff35; }
+button:hover { filter: brightness(1.08); }
+.status { min-height: 20px; margin: 14px 0 0; color: #8cf5c8; font-size: 14px; line-height: 1.5; }
+footer { padding: 20px 8px 0; text-align: center; color: #7e9bb1; font-size: 12px; }
+@media (max-width: 520px) { .wrap { padding-top: 22px; } .panel { padding: 20px 16px; } }
